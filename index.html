@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner App</title>
+    <!-- Include Dynamsoft WebTwain library -->
+    <script type="text/javascript" src="Resources/dynamsoft.webtwain.initiate.js"></script>
+    <script type="text/javascript" src="Resources/dynamsoft.webtwain.config.js"></script>
+    <script src="https://www.dynamsoft.com/libs/dwt/17.2/dynamsoft.webtwain.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            
+            
+            display: flex;
+        }
+        #dwtcontrolContainer {
+          flex: 1;
+          border: 1px solid #ccc;
+          overflow-y: auto;
+          max-height: 800px; 
+         }
+        #scanner-options {
+            flex: 1;
+            margin-left: 20px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="dwtcontrolContainer" ></div>
+
+    <div id="scanner-options">
+        <label for="select-source">Select Source:</label>
+        <select id="select-source">
+           
+                <option value="100">TWAIN2 Free Image Software Scanner</option>
+                <option value="200">Twain-64-TWAIN2 Free Image Software Scanner</option>
+                <!-- Add more options as needed -->
+            
+        </select>
+        <br>
+        <label>
+            <input type="checkbox" id="show-ui"> Show UI
+        </label>
+        <br>
+        <label>
+            <input type="checkbox" id="auto-feeder"> AutoFeeder
+        </label>
+        <br>
+        <label>Pixel Type:</label>
+        <label>
+            <input type="radio" name="pixel-type" value="bw"> Black & White
+        </label>
+        <label>
+            <input type="radio" name="pixel-type" value="gray"> Gray
+        </label>
+        <label>
+            <input type="radio" name="pixel-type" value="color"> Color
+        </label>
+        <br>
+        <label for="resolution">Resolution:</label>
+        <select id="resolution">
+            <option value="100">100 DPI</option>
+            <option value="200">200 DPI</option>
+            <!-- Add more options as needed -->
+        </select>
+        <br>
+        <input type="button" value="ScanAndSave(1)" onclick="AcquireImage();" />
+        <input type="button" value="ScanAndSave(2)" onclick="AcquireImage();" />
+        <input type="button" value="remove blank pages" onclick="AcquireImage1()" />
+        <input type="button" value="remove all Images" onclick="AcquireImage2()" />
+  
+
+    </div>
+
+    <script type="text/javascript">
+        var DWObject;
+	function Dynamsoft_OnReady() {
+		DWObject = Dynamsoft.DWT.GetWebTwain('dwtcontrolContainer');
+	}
+	function AcquireImage() {
+	    if (DWObject) {		
+	        DWObject.SelectSourceAsync().then(function () {
+	            return DWObject.AcquireImageAsync({
+	                IfCloseSourceAfterAcquire: true 
+	            });
+	        }).catch(function (exp) {
+	            alert(exp.message);
+	        });
+	    }
+	}
+
+    function AcquireImage1() {
+    if (DWObject) {
+        if (DWObject.UseLocalService) {
+            DWObject.SelectSourceAsync().then(function () {
+                return DWObject.AcquireImageAsync({
+                    IfAutoDiscardBlankpages: document.getElementById('RemoveBlankPage').checked,
+                    IfCloseSourceAfterAcquire: true 
+                   
+                });
+            }).catch(function (exp) {
+                alert(exp.message);
+            });
+        }
+    }
+ }
+ function AcquireImage2() {
+    if (DWObject) {
+        if (DWObject.UseLocalService) {
+            DWObject.SelectSourceAsync().then(function () {
+                return DWObject.AcquireImageAsync({
+                    IfAutoDiscardBlankpages: document.getElementById('RemoveAllImages').checked,
+                    IfCloseSourceAfterAcquire: true 
+                   
+                });
+            }).catch(function (exp) {
+                alert(exp.message);
+            });
+        }
+    }
+ }
+
+ </script>
+</body>
+</html>
